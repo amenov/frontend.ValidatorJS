@@ -57,7 +57,7 @@ class Validator {
   }
 
   #getRuleHandler(name) {
-    const methods = require(__dirname + '/methods.json')
+    const methods = require(__dirname + '/methods.js')
     const handler = require(__dirname + '/methods/' + methods[name])
 
     return handler
