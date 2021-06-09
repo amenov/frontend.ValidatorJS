@@ -1,6 +1,6 @@
 const Validator = require(__dirname + '/../../Validator')
 
-module.exports = async ({ rules, requestKey, requestValue, ruleArg: type }) => {
+module.exports = ({ rules, requestKey, requestValue, ruleArg: type }) => {
   if (!Array.isArray(requestValue)) {
     return 'This field must be a "array"'
   }
@@ -38,7 +38,7 @@ module.exports = async ({ rules, requestKey, requestValue, ruleArg: type }) => {
               { message: validationRules }
             )
 
-            await validation.fails()
+            validation.fails()
 
             if (validation.failed) {
               validation.errors.index = index
@@ -55,7 +55,7 @@ module.exports = async ({ rules, requestKey, requestValue, ruleArg: type }) => {
             type === 'object' ? validationRules : { message: validationRules }
           )
 
-          await validation.fails()
+          validation.fails()
 
           if (validation.failed) {
             validation.errors.index = index
