@@ -176,7 +176,7 @@ function _get_formattedRules() {
 }
 
 function _getRuleHandler2(name) {
-  var methods = require(__dirname + '/methods.json');
+  var methods = require(__dirname + '/methods.js');
 
   var handler = require(__dirname + '/methods/' + methods[name]);
 
