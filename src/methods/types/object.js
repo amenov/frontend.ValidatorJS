@@ -1,6 +1,6 @@
 const Validator = require(__dirname + '/../../Validator')
 
-module.exports = ({ rules, requestKey, requestValue }) => {
+module.exports = ({ rules, requestKey, requestValue, options }) => {
   if (requestValue?.__proto__ !== Object.prototype) {
     return 'This field must be a "object"'
   }
@@ -8,7 +8,7 @@ module.exports = ({ rules, requestKey, requestValue }) => {
   const validationRules = rules['$' + requestKey]
 
   if (validationRules) {
-    const validation = new Validator(requestValue, validationRules)
+    const validation = new Validator(requestValue, validationRules, options)
 
     validation.fails()
 

@@ -1,7 +1,14 @@
+const defaultOptions = require(__dirname + '/default-options')
+
 class Validator {
-  constructor(request, rules) {
+  constructor(request, rules, options) {
     this.request = request
     this.rules = rules
+
+    this.options = {
+      ...defaultOptions,
+      ...options
+    }
 
     this.errors = {}
   }
@@ -64,17 +71,27 @@ class Validator {
   }
 
   fails() {
+    const locale = require(__dirname + `/locales/${this.options.locale}`)
+
     for (const { key, rules } of this.#formattedRules) {
       for (const rule of rules) {
         try {
           const ruleHandler = this.#getRuleHandler(rule.name)
+
+          let errorMessage = locale[rule.name]
+
+          if (this.options?.errorMessages) {
+            errorMessage = this.options.errorMessages[key][rule.name]
+          }
 
           const message = ruleHandler({
             request: this.request,
             requestKey: key,
             requestValue: this.request[key],
             ruleArg: rule.arg,
-            rules: this.rules
+            rules: this.rules,
+            options: this.options,
+            errorMessage
           })
 
           if (message === 'skip') {

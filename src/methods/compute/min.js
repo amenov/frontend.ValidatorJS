@@ -1,4 +1,4 @@
-module.exports = ({ requestValue: value, ruleArg: num }) => {
+module.exports = ({ requestValue: value, ruleArg: num, errorMessage }) => {
   if (
     typeof value !== 'string' &&
     typeof value !== 'number' &&
@@ -14,6 +14,6 @@ module.exports = ({ requestValue: value, ruleArg: num }) => {
       (Array.isArray(value) && value.length >= num)
     )
   ) {
-    return `Minimum: ${num}`
+    return errorMessage(num)
   }
 }

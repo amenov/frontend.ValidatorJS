@@ -1,6 +1,12 @@
 const Validator = require(__dirname + '/../../Validator')
 
-module.exports = ({ rules, requestKey, requestValue, ruleArg: type }) => {
+module.exports = ({
+  rules,
+  requestKey,
+  requestValue,
+  ruleArg: type,
+  options
+}) => {
   if (!Array.isArray(requestValue)) {
     return 'This field must be a "array"'
   }
@@ -35,7 +41,8 @@ module.exports = ({ rules, requestKey, requestValue, ruleArg: type }) => {
           for (const element of item) {
             const validation = new Validator(
               { message: element },
-              { message: validationRules }
+              { message: validationRules },
+              options
             )
 
             validation.fails()
@@ -52,7 +59,8 @@ module.exports = ({ rules, requestKey, requestValue, ruleArg: type }) => {
         } else {
           const validation = new Validator(
             type === 'object' ? item : { message: item },
-            type === 'object' ? validationRules : { message: validationRules }
+            type === 'object' ? validationRules : { message: validationRules },
+            options
           )
 
           validation.fails()

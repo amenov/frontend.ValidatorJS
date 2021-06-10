@@ -1,4 +1,4 @@
-module.exports = ({ requestValue: value }) => {
+module.exports = ({ requestValue: value, errorMessage }) => {
   if (typeof value === 'string') {
     value = value.trim()
   }
@@ -9,6 +9,6 @@ module.exports = ({ requestValue: value }) => {
     value.length === 0 ||
     (value.__proto__ === Object.prototype && !Object.keys(value).length)
   ) {
-    return 'Required field'
+    return errorMessage
   }
 }
