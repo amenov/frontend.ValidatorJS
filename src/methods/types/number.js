@@ -1,5 +1,5 @@
-module.exports = ({ requestValue }) => {
+module.exports = ({ requestValue, errorMessage }) => {
   if (typeof requestValue !== 'number') {
-    return 'This field must be a "number"'
+    return errorMessage.custom ?? errorMessage.default
   }
 }

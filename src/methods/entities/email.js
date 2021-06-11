@@ -1,4 +1,4 @@
-module.exports = ({ requestValue: value }) => {
+module.exports = ({ requestValue: value, errorMessage }) => {
   if (
     typeof value !== 'string' ||
     value.trim() === '' ||
@@ -6,6 +6,6 @@ module.exports = ({ requestValue: value }) => {
       /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i
     )
   ) {
-    return 'Invalid email'
+    return errorMessage.custom ?? errorMessage.default
   }
 }

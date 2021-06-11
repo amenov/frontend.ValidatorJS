@@ -1,5 +1,5 @@
-module.exports = ({ requestValue }) => {
+module.exports = ({ requestValue, errorMessage }) => {
   if (typeof requestValue !== 'boolean') {
-    return 'This field must be a "boolean"'
+    return errorMessage.custom ?? errorMessage.default
   }
 }

@@ -1,5 +1,6 @@
 const defaultOptions = {
-  locale: 'en'
+  locale: 'en',
+  errorMessages: {}
 }
 
 module.exports = defaultOptions

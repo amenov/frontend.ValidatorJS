@@ -1,5 +1,7 @@
-module.exports = ({ requestValue, ruleArg: length }) => {
+module.exports = ({ requestValue, ruleArg: length, errorMessage }) => {
   if (requestValue.length !== +length) {
-    return `The length should be: ${length}`
+    errorMessage = errorMessage.custom ?? errorMessage.default
+
+    return errorMessage(length)
   }
 }

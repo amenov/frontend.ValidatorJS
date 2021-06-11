@@ -1,24 +1,32 @@
 const Validator = require('./src/Validator')
 
 const request = {
-  name: '',
-  age: 17
+  addresses: [{}]
 }
 
 const rules = {
-  name: 'required',
-  age: 'required|min:18'
+  addresses: 'required|array:object',
+
+  '$addresses:object': {
+    city: 'required',
+    postcode: 'required'
+  }
 }
 
 const validation = new Validator(request, rules, {
-  locale: 'ru',
+  locale: 'en',
   errorMessages: {
-    name: {
-      required: 'Это обязательно!!!'
-    },
-    age: {
-      required: 'Это обязasdasdательно!!!',
-      min: (num) => `Минasdasdимально: ${num}`
+    addresses: {
+      required: 'Алоу, чё тамм?',
+      array: {
+        common: 'Где массив?!',
+        expectedType: (type) => `Я вообще то ждал: ${type}!`
+      },
+      object: {
+        city: {
+          required: 'Тимоха обязательно нада свои права качать?!'
+        }
+      }
     }
   }
 })
@@ -26,5 +34,5 @@ const validation = new Validator(request, rules, {
 validation.fails()
 
 if (validation.failed) {
-  console.log(validation.errors)
+  console.log(JSON.stringify(validation.errors, null, 2))
 }

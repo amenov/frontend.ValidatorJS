@@ -1,15 +1,13 @@
-const defaultOptions = require(__dirname + '/default-options')
-
 class Validator {
   constructor(request, rules, options) {
     this.request = request
     this.rules = rules
-
     this.options = {
-      ...defaultOptions,
+      ...require(__dirname + '/default-options'),
       ...options
     }
 
+    this.methods = require(__dirname + '/methods.js')
     this.errors = {}
   }
 
@@ -63,35 +61,34 @@ class Validator {
     return !!Object.keys(this.errors).length
   }
 
-  #getRuleHandler(name) {
-    const methods = require(__dirname + '/methods.js')
-    const handler = require(__dirname + '/methods/' + methods[name])
+  #ruleHandler(name, options) {
+    const handler = require(__dirname + '/methods/' + this.methods[name])
 
-    return handler
+    return handler(options)
   }
 
   fails() {
     const locale = require(__dirname + `/locales/${this.options.locale}`)
+    const errorMessages = this.options.errorMessages
 
     for (const { key, rules } of this.#formattedRules) {
       for (const rule of rules) {
         try {
-          const ruleHandler = this.#getRuleHandler(rule.name)
-
-          let errorMessage = locale[rule.name]
-
-          if (this.options?.errorMessages) {
-            errorMessage = this.options.errorMessages[key][rule.name]
-          }
-
-          const message = ruleHandler({
+          const message = this.#ruleHandler(rule.name, {
             request: this.request,
+            rules: this.rules,
+            options: this.options,
             requestKey: key,
             requestValue: this.request[key],
             ruleArg: rule.arg,
-            rules: this.rules,
-            options: this.options,
-            errorMessage
+            errorMessage: {
+              default: locale[rule.name],
+              get custom() {
+                if (errorMessages[key] && errorMessages[key][rule.name]) {
+                  return errorMessages[key][rule.name]
+                }
+              }
+            }
           })
 
           if (message === 'skip') {

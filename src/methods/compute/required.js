@@ -9,6 +9,6 @@ module.exports = ({ requestValue: value, errorMessage }) => {
     value.length === 0 ||
     (value.__proto__ === Object.prototype && !Object.keys(value).length)
   ) {
-    return errorMessage
+    return errorMessage.custom ?? errorMessage.default
   }
 }

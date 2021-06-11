@@ -1,22 +1,16 @@
-module.exports = ({ requestValue: value, ruleArg }) => {
+module.exports = ({ requestValue: value, ruleArg, errorMessage }) => {
   const [leftNum, rightNum] = ruleArg.split('-')
+
+  if (errorMessage.custom) {
+    errorMessage = Object.assign(errorMessage.default, errorMessage.custom)
+  }
 
   if (
     typeof value !== 'string' &&
     typeof value !== 'number' &&
     !Array.isArray(value)
   ) {
-    return 'Between[TypeError]: Type can only be string, number, array'
-  }
-
-  if (
-    !(
-      (typeof value === 'string' && value.length >= leftNum) ||
-      (typeof value === 'number' && value >= leftNum) ||
-      (Array.isArray(value) && value.length >= leftNum)
-    )
-  ) {
-    return `Minimum: ${leftNum}`
+    return errorMessage.typeError
   }
 
   if (
@@ -26,6 +20,16 @@ module.exports = ({ requestValue: value, ruleArg }) => {
       (Array.isArray(value) && value.length <= rightNum)
     )
   ) {
-    return `Maximum: ${rightNum}`
+    return errorMessage.max(rightNum)
+  }
+
+  if (
+    !(
+      (typeof value === 'string' && value.length >= leftNum) ||
+      (typeof value === 'number' && value >= leftNum) ||
+      (Array.isArray(value) && value.length >= leftNum)
+    )
+  ) {
+    return errorMessage.min(leftNum)
   }
 }

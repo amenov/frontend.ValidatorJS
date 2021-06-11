@@ -1,10 +1,14 @@
 module.exports = ({ requestValue: value, ruleArg: num, errorMessage }) => {
+  if (errorMessage.custom) {
+    errorMessage = Object.assign(errorMessage.default, errorMessage.custom)
+  }
+
   if (
     typeof value !== 'string' &&
     typeof value !== 'number' &&
     !Array.isArray(value)
   ) {
-    return 'Min[TypeError]: Type can only be string, number, array'
+    return errorMessage.typeError
   }
 
   if (
@@ -14,6 +18,6 @@ module.exports = ({ requestValue: value, ruleArg: num, errorMessage }) => {
       (Array.isArray(value) && value.length >= num)
     )
   ) {
-    return errorMessage(num)
+    return errorMessage.main(num)
   }
 }

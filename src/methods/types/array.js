@@ -5,17 +5,22 @@ module.exports = ({
   requestKey,
   requestValue,
   ruleArg: type,
-  options
+  options,
+  errorMessage
 }) => {
-  if (!Array.isArray(requestValue)) {
-    return 'This field must be a "array"'
+  if (errorMessage.custom) {
+    errorMessage = Object.assign(errorMessage.default, errorMessage.custom)
   }
 
-  const availableTypes = ['string', 'boolean', 'number', 'array', 'object']
+  if (!Array.isArray(requestValue)) {
+    return errorMessage.main
+  }
+
+  const availableTypes = ['string', 'boolean', 'number', 'object']
 
   if (type) {
     if (!availableTypes.includes(type)) {
-      return 'The type you specified was not found in the list of available types.'
+      return errorMessage.typeNotSupported
     }
 
     let index = 0
@@ -23,11 +28,10 @@ module.exports = ({
     for (const item of requestValue) {
       if (
         (type === 'object' && item.__proto__ !== Object.prototype) ||
-        (type === 'array' && !Array.isArray(item)) ||
-        (typeof item !== type && type !== 'object' && type !== 'array')
+        (typeof item !== type && type !== 'object')
       ) {
         return {
-          message: `Array element must be of type "${type}"`,
+          message: errorMessage.expectedType(type),
           index
         }
       }
@@ -35,41 +39,34 @@ module.exports = ({
       const validationRules = rules['$' + requestKey + ':' + type]
 
       if (validationRules) {
-        if (type === 'array') {
-          let elementIndex = 0
+        function wrapper(value) {
+          return type === 'object' ? value : { message: value }
+        }
 
-          for (const element of item) {
-            const validation = new Validator(
-              { message: element },
-              { message: validationRules },
-              options
-            )
-
-            validation.fails()
-
-            if (validation.failed) {
-              validation.errors.index = index
-              validation.errors.elementIndex = elementIndex
-
-              return validation.errors
-            }
-
-            elementIndex++
-          }
-        } else {
-          const validation = new Validator(
-            type === 'object' ? item : { message: item },
-            type === 'object' ? validationRules : { message: validationRules },
-            options
+        if (
+          options.errorMessages[requestKey] &&
+          options.errorMessages[requestKey][type]
+        ) {
+          Object.assign(
+            options.errorMessages,
+            wrapper(options.errorMessages[requestKey][type])
           )
 
-          validation.fails()
+          delete options.errorMessages[requestKey]
+        }
 
-          if (validation.failed) {
-            validation.errors.index = index
+        const validation = new Validator(
+          wrapper(item),
+          wrapper(validationRules),
+          options
+        )
 
-            return validation.errors
-          }
+        validation.fails()
+
+        if (validation.failed) {
+          validation.errors.index = index
+
+          return validation.errors
         }
       }
 

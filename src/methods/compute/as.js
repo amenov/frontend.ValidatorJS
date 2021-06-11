@@ -1,5 +1,13 @@
-module.exports = ({ request, requestKey, requestValue, ruleArg }) => {
+module.exports = ({
+  request,
+  requestKey,
+  requestValue,
+  ruleArg,
+  errorMessage
+}) => {
   if (requestValue !== request[ruleArg]) {
-    return `The value of the field "${requestKey}" does not match the value of the field "${ruleArg}"`
+    errorMessage = errorMessage.custom ?? errorMessage.default
+
+    return errorMessage(requestKey, ruleArg)
   }
 }
