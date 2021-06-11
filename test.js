@@ -1,35 +1,10 @@
 const Validator = require('./src/Validator')
 
-const request = {
-  addresses: [{}]
-}
+const request = {}
 
-const rules = {
-  addresses: 'required|array:object',
+const rules = {}
 
-  '$addresses:object': {
-    city: 'required',
-    postcode: 'required'
-  }
-}
-
-const validation = new Validator(request, rules, {
-  locale: 'en',
-  errorMessages: {
-    addresses: {
-      required: 'Алоу, чё тамм?',
-      array: {
-        common: 'Где массив?!',
-        expectedType: (type) => `Я вообще то ждал: ${type}!`
-      },
-      object: {
-        city: {
-          required: 'Тимоха обязательно нада свои права качать?!'
-        }
-      }
-    }
-  }
-})
+const validation = new Validator(request, rules)
 
 validation.fails()
 
