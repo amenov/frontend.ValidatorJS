@@ -68,7 +68,7 @@ class Validator {
 
       return handler(options)
     } catch (err) {
-      console.log(err instanceof ReferenceError)
+      console.log(err)
     }
   }
 
