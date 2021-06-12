@@ -1,5 +1,7 @@
 const lpn = require('libphonenumber-js')
 
+console.log(lpn)
+
 module.exports = ({
   requestValue,
   ruleArg: countryCode,
