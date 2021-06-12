@@ -21,8 +21,6 @@ module.exports = ({
       delete options.errorMessages[requestKey]
     }
 
-    console.log(options.errorMessages)
-
     const validation = new Validator(requestValue, validationRules, options)
 
     validation.fails()

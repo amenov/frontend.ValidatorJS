@@ -1,6 +1,4 @@
-const lpn = require('libphonenumber-js')
-
-console.log(lpn)
+import lpn from 'libphonenumber-js'
 
 module.exports = ({
   requestValue,
