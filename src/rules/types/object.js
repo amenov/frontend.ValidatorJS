@@ -5,10 +5,11 @@ module.exports = ({
   requestKey,
   requestValue,
   options,
-  errorMessage
+  errorMessage,
+  errorMessagesWrapper
 }) => {
   if (requestValue?.__proto__ !== Object.prototype) {
-    return errorMessage.custom ?? errorMessage.default
+    return errorMessagesWrapper(errorMessage).emw2()
   }
 
   const validationRules = rules['$' + requestKey]

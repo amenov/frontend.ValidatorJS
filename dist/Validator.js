@@ -18,28 +18,44 @@ function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (O
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 function _classPrivateMethodGet(receiver, privateSet, fn) { if (!privateSet.has(receiver)) { throw new TypeError("attempted to get private field on non-instance"); } return fn; }
 
 function _classPrivateFieldGet(receiver, privateMap) { var descriptor = _classExtractFieldDescriptor(receiver, privateMap, "get"); return _classApplyDescriptorGet(receiver, descriptor); }
 
+function _classApplyDescriptorGet(receiver, descriptor) { if (descriptor.get) { return descriptor.get.call(receiver); } return descriptor.value; }
+
+function _classPrivateFieldSet(receiver, privateMap, value) { var descriptor = _classExtractFieldDescriptor(receiver, privateMap, "set"); _classApplyDescriptorSet(receiver, descriptor, value); return value; }
+
 function _classExtractFieldDescriptor(receiver, privateMap, action) { if (!privateMap.has(receiver)) { throw new TypeError("attempted to " + action + " private field on non-instance"); } return privateMap.get(receiver); }
 
-function _classApplyDescriptorGet(receiver, descriptor) { if (descriptor.get) { return descriptor.get.call(receiver); } return descriptor.value; }
+function _classApplyDescriptorSet(receiver, descriptor, value) { if (descriptor.set) { descriptor.set.call(receiver, value); } else { if (!descriptor.writable) { throw new TypeError("attempted to set read only private field"); } descriptor.value = value; } }
+
+var _request = /*#__PURE__*/new WeakMap();
+
+var _rules = /*#__PURE__*/new WeakMap();
+
+var _options = /*#__PURE__*/new WeakMap();
+
+var _errorMessages = /*#__PURE__*/new WeakMap();
+
+var _configRules = /*#__PURE__*/new WeakMap();
+
+var _errorMessagesWrapper = /*#__PURE__*/new WeakMap();
 
 var _formattedRules = /*#__PURE__*/new WeakMap();
 
 var _ruleHandler = /*#__PURE__*/new WeakSet();
 
 var Validator = /*#__PURE__*/function () {
-  function Validator(request, _rules, _options) {
+  function Validator(request, _rules2, _options2) {
     _classCallCheck(this, Validator);
 
     _ruleHandler.add(this);
@@ -49,32 +65,57 @@ var Validator = /*#__PURE__*/function () {
       set: void 0
     });
 
-    this.request = request;
-    this.rules = _rules;
-    this.options = _objectSpread(_objectSpread({}, require(__dirname + '/default-options')), _options);
-    this.methods = require(__dirname + '/methods.js');
-    this.errors = {};
+    _request.set(this, {
+      writable: true,
+      value: void 0
+    });
+
+    _rules.set(this, {
+      writable: true,
+      value: void 0
+    });
+
+    _options.set(this, {
+      writable: true,
+      value: void 0
+    });
+
+    _errorMessages.set(this, {
+      writable: true,
+      value: void 0
+    });
+
+    _configRules.set(this, {
+      writable: true,
+      value: require(__dirname + '/config-rules')
+    });
+
+    _errorMessagesWrapper.set(this, {
+      writable: true,
+      value: require(__dirname + '/error-messages-wrapper')
+    });
+
+    _defineProperty(this, "errors", {});
+
+    _classPrivateFieldSet(this, _request, request || {});
+
+    _classPrivateFieldSet(this, _rules, _rules2 || {});
+
+    _classPrivateFieldSet(this, _options, _objectSpread({
+      locale: 'en'
+    }, _options2 || {}));
+
+    _classPrivateFieldSet(this, _errorMessages, require(__dirname + "/error-messages/".concat(_classPrivateFieldGet(this, _options).locale)));
   }
 
   _createClass(Validator, [{
-    key: "failed",
-    get: function get() {
-      return !!Object.keys(this.errors).length;
-    }
-  }, {
     key: "fails",
     value: function fails() {
-      var _this = this;
-
-      var locale = require(__dirname + "/locales/".concat(this.options.locale));
-
-      var errorMessages = this.options.errorMessages;
-
       var _iterator = _createForOfIteratorHelper(_classPrivateFieldGet(this, _formattedRules)),
           _step;
 
       try {
-        var _loop = function _loop() {
+        for (_iterator.s(); !(_step = _iterator.n()).done;) {
           var _step$value = _step.value,
               key = _step$value.key,
               rules = _step$value.rules;
@@ -83,54 +124,37 @@ var Validator = /*#__PURE__*/function () {
               _step2;
 
           try {
-            var _loop2 = function _loop2() {
+            for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
+              var _classPrivateFieldGet2, _classPrivateFieldGet3;
+
               var rule = _step2.value;
 
-              try {
-                var message = _classPrivateMethodGet(_this, _ruleHandler, _ruleHandler2).call(_this, rule.name, {
-                  request: _this.request,
-                  rules: _this.rules,
-                  options: _this.options,
-                  requestKey: key,
-                  requestValue: _this.request[key],
-                  ruleArg: rule.arg,
-                  errorMessage: {
-                    "default": locale[rule.name],
+              var message = _classPrivateMethodGet(this, _ruleHandler, _ruleHandler2).call(this, rule.name, {
+                request: _classPrivateFieldGet(this, _request),
+                rules: _classPrivateFieldGet(this, _rules),
+                options: _classPrivateFieldGet(this, _options),
+                requestKey: key,
+                requestValue: _classPrivateFieldGet(this, _request)[key],
+                ruleArg: rule.arg,
+                errorMessage: {
+                  "default": _classPrivateFieldGet(this, _errorMessages)[rule.name],
+                  custom: (_classPrivateFieldGet2 = _classPrivateFieldGet(this, _options).errorMessages) === null || _classPrivateFieldGet2 === void 0 ? void 0 : (_classPrivateFieldGet3 = _classPrivateFieldGet2[key]) === null || _classPrivateFieldGet3 === void 0 ? void 0 : _classPrivateFieldGet3[rule.name]
+                },
+                errorMessagesWrapper: _classPrivateFieldGet(this, _errorMessagesWrapper)
+              });
 
-                    get custom() {
-                      if (errorMessages[key] && errorMessages[key][rule.name]) {
-                        return errorMessages[key][rule.name];
-                      }
-                    }
-
-                  }
-                });
-
-                if (message === 'skip') {
-                  return "break";
-                } else if (message) {
-                  _this.errors[key] = message;
-                  return "break";
-                }
-              } catch (err) {
-                console.log(err);
+              if (message === 'skip') {
+                break;
+              } else if (message) {
+                this.errors[key] = message;
+                break;
               }
-            };
-
-            for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
-              var _ret = _loop2();
-
-              if (_ret === "break") break;
             }
           } catch (err) {
             _iterator2.e(err);
           } finally {
             _iterator2.f();
           }
-        };
-
-        for (_iterator.s(); !(_step = _iterator.n()).done;) {
-          _loop();
         }
       } catch (err) {
         _iterator.e(err);
@@ -140,6 +164,11 @@ var Validator = /*#__PURE__*/function () {
 
       return this.failed;
     }
+  }, {
+    key: "failed",
+    get: function get() {
+      return !!Object.keys(this.errors).length;
+    }
   }]);
 
   return Validator;
@@ -148,21 +177,21 @@ var Validator = /*#__PURE__*/function () {
 function _get_formattedRules() {
   var formattedRules = [];
 
-  for (var key in this.rules) {
+  for (var key in _classPrivateFieldGet(this, _rules)) {
     if (!key.startsWith('$')) {
-      var value = this.rules[key];
+      var value = _classPrivateFieldGet(this, _rules)[key];
 
       if (value.__proto__ === Object.prototype) {
         var _Object$assign;
 
-        Object.assign(this.rules, (_Object$assign = {}, _defineProperty(_Object$assign, key, 'object'), _defineProperty(_Object$assign, '$' + key, value), _Object$assign));
+        Object.assign(_classPrivateFieldGet(this, _rules), (_Object$assign = {}, _defineProperty(_Object$assign, key, 'object'), _defineProperty(_Object$assign, '$' + key, value), _Object$assign));
       }
     }
   }
 
-  for (var _key in this.rules) {
+  for (var _key in _classPrivateFieldGet(this, _rules)) {
     if (!_key.startsWith('$')) {
-      var _value = this.rules[_key];
+      var _value = _classPrivateFieldGet(this, _rules)[_key];
 
       if (_value && typeof _value === 'string') {
         var rules = [];
@@ -207,9 +236,13 @@ function _get_formattedRules() {
 }
 
 function _ruleHandler2(name, options) {
-  var handler = require(__dirname + '/methods/' + this.methods[name]);
+  try {
+    var handler = require(__dirname + '/rules/' + _classPrivateFieldGet(this, _configRules)[name]);
 
-  return handler(options);
+    return handler(options);
+  } catch (err) {
+    console.log(err instanceof ReferenceError);
+  }
 }
 
 module.exports = Validator;

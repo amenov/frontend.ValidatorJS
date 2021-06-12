@@ -1,4 +1,8 @@
-module.exports = ({ requestValue: value, errorMessage }) => {
+module.exports = ({
+  requestValue: value,
+  errorMessage,
+  errorMessagesWrapper
+}) => {
   if (typeof value === 'string') {
     value = value.trim()
   }
@@ -9,6 +13,6 @@ module.exports = ({ requestValue: value, errorMessage }) => {
     value.length === 0 ||
     (value.__proto__ === Object.prototype && !Object.keys(value).length)
   ) {
-    return errorMessage.custom ?? errorMessage.default
+    return errorMessagesWrapper(errorMessage).emw2()
   }
 }

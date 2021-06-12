@@ -3,10 +3,11 @@ module.exports = ({
   requestKey,
   requestValue,
   ruleArg,
-  errorMessage
+  errorMessage,
+  errorMessagesWrapper
 }) => {
   if (requestValue !== request[ruleArg]) {
-    errorMessage = errorMessage.custom ?? errorMessage.default
+    errorMessage = errorMessagesWrapper(errorMessage).emw2()
 
     return errorMessage(requestKey, ruleArg)
   }

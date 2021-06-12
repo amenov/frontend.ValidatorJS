@@ -1,4 +1,8 @@
-module.exports = ({ requestValue: value, errorMessage }) => {
+module.exports = ({
+  requestValue: value,
+  errorMessage,
+  errorMessagesWrapper
+}) => {
   if (
     typeof value !== 'string' ||
     value.trim() === '' ||
@@ -6,6 +10,6 @@ module.exports = ({ requestValue: value, errorMessage }) => {
       /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i
     )
   ) {
-    return errorMessage.custom ?? errorMessage.default
+    return errorMessagesWrapper(errorMessage).emw2()
   }
 }

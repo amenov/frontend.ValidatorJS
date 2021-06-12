@@ -1,9 +1,12 @@
-module.exports = ({ requestValue: value, ruleArg, errorMessage }) => {
+module.exports = ({
+  requestValue: value,
+  ruleArg,
+  errorMessage,
+  errorMessagesWrapper
+}) => {
   const [leftNum, rightNum] = ruleArg.split('-')
 
-  if (errorMessage.custom) {
-    errorMessage = Object.assign(errorMessage.default, errorMessage.custom)
-  }
+  errorMessage = errorMessagesWrapper(errorMessage).emw1(false)
 
   if (
     typeof value !== 'string' &&

@@ -1,7 +1,10 @@
-module.exports = ({ requestValue: value, ruleArg: num, errorMessage }) => {
-  if (errorMessage.custom) {
-    errorMessage = Object.assign(errorMessage.default, errorMessage.custom)
-  }
+module.exports = ({
+  requestValue: value,
+  ruleArg: num,
+  errorMessage,
+  errorMessagesWrapper
+}) => {
+  errorMessage = errorMessagesWrapper(errorMessage).emw1()
 
   if (
     typeof value !== 'string' &&

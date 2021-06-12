@@ -4,7 +4,9 @@ const request = {}
 
 const rules = {}
 
-const validation = new Validator(request, rules)
+const options = {}
+
+const validation = new Validator(request, rules, options)
 
 validation.fails()
 

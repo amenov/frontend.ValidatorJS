@@ -6,11 +6,10 @@ module.exports = ({
   requestValue,
   ruleArg: type,
   options,
-  errorMessage
+  errorMessage,
+  errorMessagesWrapper
 }) => {
-  if (errorMessage.custom) {
-    errorMessage = Object.assign(errorMessage.default, errorMessage.custom)
-  }
+  errorMessage = errorMessagesWrapper(errorMessage).emw1()
 
   if (!Array.isArray(requestValue)) {
     return errorMessage.main

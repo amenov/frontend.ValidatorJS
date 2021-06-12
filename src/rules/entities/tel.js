@@ -1,9 +1,12 @@
 const lpn = require('libphonenumber-js')
 
-module.exports = ({ requestValue, ruleArg: countryCode, errorMessage }) => {
-  if (errorMessage.custom) {
-    errorMessage = Object.assign(errorMessage.default, errorMessage.custom)
-  }
+module.exports = ({
+  requestValue,
+  ruleArg: countryCode,
+  errorMessage,
+  errorMessagesWrapper
+}) => {
+  errorMessage = errorMessagesWrapper(errorMessage).emw1()
 
   if (typeof requestValue !== 'string') {
     return errorMessage.typeError

@@ -1,25 +1,30 @@
 class Validator {
-  constructor(request, rules, options) {
-    this.request = request
-    this.rules = rules
-    this.options = {
-      ...require(__dirname + '/default-options'),
-      ...options
-    }
+  #request
+  #rules
+  #options
+  #errorMessages
+  #configRules = require(__dirname + '/config-rules')
+  #errorMessagesWrapper = require(__dirname + '/error-messages-wrapper')
 
-    this.methods = require(__dirname + '/methods.js')
-    this.errors = {}
+  errors = {}
+
+  constructor(request, rules, options) {
+    this.#request = request || {}
+    this.#rules = rules || {}
+    this.#options = { locale: 'en', ...(options || {}) }
+    this.#errorMessages = require(__dirname +
+      `/error-messages/${this.#options.locale}`)
   }
 
   get #formattedRules() {
     const formattedRules = []
 
-    for (const key in this.rules) {
+    for (const key in this.#rules) {
       if (!key.startsWith('$')) {
-        const value = this.rules[key]
+        const value = this.#rules[key]
 
         if (value.__proto__ === Object.prototype) {
-          Object.assign(this.rules, {
+          Object.assign(this.#rules, {
             [key]: 'object',
             ['$' + key]: value
           })
@@ -27,9 +32,9 @@ class Validator {
       }
     }
 
-    for (const key in this.rules) {
+    for (const key in this.#rules) {
       if (!key.startsWith('$')) {
-        const value = this.rules[key]
+        const value = this.#rules[key]
 
         if (value && typeof value === 'string') {
           const rules = []
@@ -57,54 +62,48 @@ class Validator {
     return formattedRules
   }
 
-  get failed() {
-    return !!Object.keys(this.errors).length
-  }
-
   #ruleHandler(name, options) {
-    const handler = require(__dirname + '/methods/' + this.methods[name])
+    try {
+      const handler = require(__dirname + '/rules/' + this.#configRules[name])
 
-    return handler(options)
+      return handler(options)
+    } catch (err) {
+      console.log(err instanceof ReferenceError)
+    }
   }
 
   fails() {
-    const locale = require(__dirname + `/locales/${this.options.locale}`)
-    const errorMessages = this.options.errorMessages
-
     for (const { key, rules } of this.#formattedRules) {
       for (const rule of rules) {
-        try {
-          const message = this.#ruleHandler(rule.name, {
-            request: this.request,
-            rules: this.rules,
-            options: this.options,
-            requestKey: key,
-            requestValue: this.request[key],
-            ruleArg: rule.arg,
-            errorMessage: {
-              default: locale[rule.name],
-              get custom() {
-                if (errorMessages[key] && errorMessages[key][rule.name]) {
-                  return errorMessages[key][rule.name]
-                }
-              }
-            }
-          })
+        const message = this.#ruleHandler(rule.name, {
+          request: this.#request,
+          rules: this.#rules,
+          options: this.#options,
+          requestKey: key,
+          requestValue: this.#request[key],
+          ruleArg: rule.arg,
+          errorMessage: {
+            default: this.#errorMessages[rule.name],
+            custom: this.#options.errorMessages?.[key]?.[rule.name]
+          },
+          errorMessagesWrapper: this.#errorMessagesWrapper
+        })
 
-          if (message === 'skip') {
-            break
-          } else if (message) {
-            this.errors[key] = message
+        if (message === 'skip') {
+          break
+        } else if (message) {
+          this.errors[key] = message
 
-            break
-          }
-        } catch (err) {
-          console.log(err)
+          break
         }
       }
     }
 
     return this.failed
+  }
+
+  get failed() {
+    return !!Object.keys(this.errors).length
   }
 }
 
