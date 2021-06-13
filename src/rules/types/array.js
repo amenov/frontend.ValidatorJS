@@ -19,43 +19,48 @@ module.exports = ({
 
   if (!availableTypes.includes(type)) return errorMessage.typeNotSupported
 
-  const errors = requestValue
-    .map((item, index) => {
-      if (
-        (type === 'object' && item.__proto__ !== Object.prototype) ||
-        (typeof item !== type && type !== 'object')
-      )
-        return {
-          message: errorMessage.expectedType(type),
-          index
-        }
+  const errors = []
 
-      const validationRules = rules['$' + requestKey + ':' + type]
-
-      if (!validationRules) return
-
-      const wrapper = (val) => (type === 'object' ? val : { message: val })
-
-      if (options.errorMessages?.[requestKey]?.[type]) {
-        Object.assign(
-          options.errorMessages,
-          wrapper(options.errorMessages[requestKey][type])
-        )
-
-        delete options.errorMessages[requestKey]
+  for (const [index, item] of requestValue.entries()) {
+    if (
+      (type === 'object' && item.__proto__ !== Object.prototype) ||
+      (typeof item !== type && type !== 'object')
+    ) {
+      errors[index] = {
+        message: errorMessage.expectedType(type),
+        index
       }
 
-      const validation = new Validator(
-        wrapper(item),
-        wrapper(validationRules),
-        options
+      continue
+    }
+
+    const validationRules = rules['$' + requestKey + ':' + type]
+
+    if (!validationRules) continue
+
+    const wrapper = (val) => (type === 'object' ? val : { message: val })
+
+    if (options.errorMessages?.[requestKey]?.[type]) {
+      Object.assign(
+        options.errorMessages,
+        wrapper(options.errorMessages[requestKey][type])
       )
 
-      validation.fails()
+      delete options.errorMessages[requestKey]
+    }
 
-      if (validation.failed) return { ...validation.errors, index }
-    })
-    .filter((error) => error)
+    const validation = new Validator(
+      wrapper(item),
+      wrapper(validationRules),
+      options
+    )
+
+    validation.fails()
+
+    if (validation.failed) {
+      errors[index] = { ...validation.errors, index }
+    }
+  }
 
   if (errors.length) return errors
 }
