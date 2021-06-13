@@ -1,4 +1,4 @@
-const Validator = require('./src/Validator')
+const Validator = require('./dist/Validator')
 
 const request = {}
 

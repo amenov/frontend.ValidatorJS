@@ -26,8 +26,10 @@ class Validator {
       )
         continue
 
-      this.#rules[key] = 'object'
-      this.#rules['$' + key] = this.#rules[key]
+      Object.assign(this.#rules, {
+        [key]: 'object',
+        ['$' + key]: this.#rules[key]
+      })
     }
 
     for (const key in this.#rules) {
