@@ -1,5 +1,3 @@
 module.exports = ({ requestValue }) => {
-  if (requestValue === null) {
-    return 'skip'
-  }
+  if (requestValue === null) return 'skip'
 }

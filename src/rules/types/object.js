@@ -8,25 +8,22 @@ module.exports = ({
   errorMessage,
   errorMessagesWrapper
 }) => {
-  if (requestValue?.__proto__ !== Object.prototype) {
+  if (requestValue?.__proto__ !== Object.prototype)
     return errorMessagesWrapper(errorMessage).emw2()
-  }
 
   const validationRules = rules['$' + requestKey]
 
-  if (validationRules) {
-    if (options.errorMessages[requestKey]) {
-      Object.assign(options.errorMessages, options.errorMessages[requestKey])
+  if (!validationRules) return
 
-      delete options.errorMessages[requestKey]
-    }
+  if (options.errorMessages?.[requestKey]) {
+    Object.assign(options.errorMessages, options.errorMessages[requestKey])
 
-    const validation = new Validator(requestValue, validationRules, options)
-
-    validation.fails()
-
-    if (validation.failed) {
-      return validation.errors
-    }
+    delete options.errorMessages[requestKey]
   }
+
+  const validation = new Validator(requestValue, validationRules, options)
+
+  validation.fails()
+
+  if (validation.failed) return validation.errors
 }

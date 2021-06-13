@@ -12,9 +12,8 @@ module.exports = ({
     typeof value !== 'string' &&
     typeof value !== 'number' &&
     !Array.isArray(value)
-  ) {
+  )
     return errorMessage.typeError
-  }
 
   if (
     !(
@@ -22,9 +21,8 @@ module.exports = ({
       (typeof value === 'number' && value <= rightNum) ||
       (Array.isArray(value) && value.length <= rightNum)
     )
-  ) {
+  )
     return errorMessage.max(rightNum)
-  }
 
   if (
     !(
@@ -32,7 +30,6 @@ module.exports = ({
       (typeof value === 'number' && value >= leftNum) ||
       (Array.isArray(value) && value.length >= leftNum)
     )
-  ) {
+  )
     return errorMessage.min(leftNum)
-  }
 }

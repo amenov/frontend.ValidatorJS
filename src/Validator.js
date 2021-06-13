@@ -20,43 +20,34 @@ class Validator {
     const formattedRules = []
 
     for (const key in this.#rules) {
-      if (!key.startsWith('$')) {
-        const value = this.#rules[key]
+      if (
+        key.startsWith('$') ||
+        this.#rules[key].__proto__ !== Object.prototype
+      )
+        continue
 
-        if (value.__proto__ === Object.prototype) {
-          Object.assign(this.#rules, {
-            [key]: 'object',
-            ['$' + key]: value
-          })
-        }
-      }
+      this.#rules[key] = 'object'
+      this.#rules['$' + key] = this.#rules[key]
     }
 
     for (const key in this.#rules) {
-      if (!key.startsWith('$')) {
-        const value = this.#rules[key]
+      if (
+        key.startsWith('$') ||
+        !(this.#rules[key] && typeof this.#rules[key] === 'string')
+      )
+        continue
 
-        if (value && typeof value === 'string') {
-          const rules = []
+      const rules = this.#rules[key].split('|').map((rule) => {
+        if (rule.includes(':')) {
+          const [name, arg] = rule.split(':')
 
-          for (const rule of value.split('|')) {
-            const obj = {}
-
-            if (rule.includes(':')) {
-              const [name, arg] = rule.split(':')
-
-              obj['name'] = name
-              obj['arg'] = arg
-            } else {
-              obj['name'] = rule
-            }
-
-            rules.push(obj)
-          }
-
-          formattedRules.push({ key, rules })
+          return { name, arg }
+        } else {
+          return { name: rule }
         }
-      }
+      })
+
+      formattedRules.push({ key, rules })
     }
 
     return formattedRules

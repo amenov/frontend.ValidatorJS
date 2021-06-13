@@ -9,7 +9,6 @@ module.exports = ({
     !value.match(
       /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i
     )
-  ) {
+  )
     return errorMessagesWrapper(errorMessage).emw2()
-  }
 }

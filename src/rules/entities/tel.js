@@ -8,17 +8,12 @@ module.exports = ({
 }) => {
   errorMessage = errorMessagesWrapper(errorMessage).emw1()
 
-  if (typeof requestValue !== 'string') {
-    return errorMessage.typeError
-  }
+  if (typeof requestValue !== 'string') return errorMessage.typeError
 
   const tel = lpn(requestValue)
 
-  if (tel === undefined || !tel.isValid()) {
-    return errorMessage.main
-  }
+  if (tel === void 0 || !tel.isValid()) return errorMessage.main
 
-  if (countryCode && tel.country !== countryCode) {
+  if (countryCode && tel.country !== countryCode)
     return errorMessage.countryCode
-  }
 }
