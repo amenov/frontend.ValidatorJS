@@ -11,7 +11,7 @@ module.exports = ({
 }) => {
   errorMessage = errorMessagesWrapper(errorMessage).emw1()
 
-  if (!Array.isArray(requestValue)) return errorMessage.main
+  if (!Array.isArray(requestValue)) return errorMessage.main()
 
   if (!type) return
 
