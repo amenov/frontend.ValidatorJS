@@ -22,6 +22,8 @@ module.exports = ({
   const errors = []
 
   for (const [index, item] of requestValue.entries()) {
+    if (item === undefined) continue
+
     if (
       (type === 'object' && item.__proto__ !== Object.prototype) ||
       (typeof item !== type && type !== 'object')
