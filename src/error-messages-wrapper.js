@@ -14,9 +14,17 @@ module.exports = (errorMessage) => ({
       }
     }
 
-    return errorMessage.custom
+    errorMessage = errorMessage.custom
       ? Object.assign(errorMessage.default, errorMessage.custom)
       : errorMessage.default
+
+    if (typeof errorMessage.main === 'string') {
+      const message = errorMessage.main
+
+      errorMessage.main = () => message
+    }
+
+    return errorMessage
   },
   emw2: () => errorMessage.custom ?? errorMessage.default
 })
