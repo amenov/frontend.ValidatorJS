@@ -28,12 +28,7 @@ const locale = {
   },
 
   // TYPES
-  array: {
-    main: 'This field must be a "array"',
-    typeNotSupported:
-      'The type you specified was not found in the list of available types.',
-    expectedType: (type) => `Array element must be of type "${type}"`
-  },
+  array: 'This field must be a "array"',
   boolean: 'This field must be a "boolean"',
   number: 'This field must be a "number"',
   object: 'This field must be a "object"',

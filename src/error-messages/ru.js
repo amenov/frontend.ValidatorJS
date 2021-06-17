@@ -28,11 +28,7 @@ const locale = {
   },
 
   // TYPES
-  array: {
-    main: 'Тип может быть только "array"',
-    typeNotSupported: 'Указанный вами тип не найден в списке доступных типов',
-    expectedType: (type) => `Элемент массива должен иметь тип "${type}"`
-  },
+  array: 'Тип может быть только "array"',
   boolean: 'Это поле должно быть "boolean"',
   number: 'Это поле должно быть "number"',
   object: 'Это поле должно быть "object"',

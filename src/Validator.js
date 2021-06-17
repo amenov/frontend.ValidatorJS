@@ -21,15 +21,25 @@ class Validator {
 
     for (const key in this.#rules) {
       if (
-        key.startsWith('$') ||
-        this.#rules[key].__proto__ !== Object.prototype
-      )
-        continue
+        !key.startsWith('$') &&
+        this.#rules[key].__proto__ === Object.prototype
+      ) {
+        Object.assign(this.#rules, {
+          [key]: 'object',
+          ['$' + key]: this.#rules[key]
+        })
+      }
 
-      Object.assign(this.#rules, {
-        [key]: 'object',
-        ['$' + key]: this.#rules[key]
-      })
+      if (
+        key.startsWith('$') &&
+        this.#rules[key].__proto__ === Object.prototype
+      ) {
+        const value = this.#rules[key.slice(1)]
+
+        Object.assign(this.#rules, {
+          [key.slice(1)]: (value ? value + '|' : '') + 'array'
+        })
+      }
     }
 
     for (const key in this.#rules) {
