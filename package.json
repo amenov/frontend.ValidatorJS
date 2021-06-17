@@ -1,6 +1,6 @@
 {
   "name": "amenov.frontend.validator",
-  "version": "2.1.17",
+  "version": "2.1.18",
   "description": "",
   "main": "dist/Validator.js",
   "scripts": {
