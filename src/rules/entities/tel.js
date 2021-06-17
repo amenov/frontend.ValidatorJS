@@ -1,4 +1,6 @@
-import lpn from 'libphonenumber-js'
+// import lpn from 'libphonenumber-js'
+
+const lpn = require('libphonenumber-js')
 
 module.exports = ({
   requestValue,
@@ -12,7 +14,8 @@ module.exports = ({
 
   const tel = lpn(requestValue)
 
-  if (tel === void 0 || !tel.isValid()) return errorMessage.main()
+  if (tel === void 0 || !tel.isValid() || requestValue.match(/[A-ZА-Я]/i))
+    return errorMessage.main()
 
   if (countryCode && tel.country !== countryCode)
     return errorMessage.countryCode

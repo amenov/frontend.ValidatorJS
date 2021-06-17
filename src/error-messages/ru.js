@@ -7,7 +7,7 @@ const locale = {
     max: (num) => `Максимум: ${num}`,
     min: (num) => `Минимум: ${num}`
   },
-  length: (num) => `The length should be: ${num}`,
+  length: (num) => `Длина должна быть: ${num}`,
   max: {
     typeError: 'Тип может быть только: string, number, array',
     main: (num) => `Максимум: ${num}`
