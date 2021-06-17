@@ -1,6 +1,4 @@
-// import lpn from 'libphonenumber-js'
-
-const lpn = require('libphonenumber-js')
+import lpn from 'libphonenumber-js'
 
 module.exports = ({
   requestValue,
